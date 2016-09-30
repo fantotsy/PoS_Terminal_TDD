@@ -1,3 +1,5 @@
+import javafx.beans.binding.IntegerBinding;
+import javafx.beans.binding.MapBinding;
 import products.Product;
 
 import java.util.HashMap;
@@ -37,17 +39,27 @@ public class PosTerminal {
     }
 
     public void addOrder(Product product) {
-        boolean found = false;
-        for (Map.Entry<Product, Integer> entry : order.entrySet()) {
-            if (entry.getKey().getClass() == product.getClass()) {
-                int amountOfProduct = entry.getValue();
-                entry.setValue(++amountOfProduct);
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
+        Map.Entry<Product, Integer> entry = getExistingProduct(product);
+        if (entry != null) {
+            int amountOfProduct = entry.getValue();
+            entry.setValue(++amountOfProduct);
+        } else {
             order.put(product, 1);
+        }
+    }
+
+    public void cancelOrder(Product product) {
+        Map.Entry<Product, Integer> entry = getExistingProduct(product);
+        if (entry != null) {
+            Product existingProduct = entry.getKey();
+            int amountOfProduct = entry.getValue();
+            if (amountOfProduct == 1) {
+                order.remove(existingProduct);
+            } else {
+                entry.setValue(--amountOfProduct);
+            }
+        } else {
+            throw new IllegalStateException();
         }
     }
 
@@ -62,6 +74,24 @@ public class PosTerminal {
     public boolean isEnoughBalanceToBuy() {
         int total = total();
         return (balance > total);
+    }
+
+    public Map.Entry<Product, Integer> getExistingProduct(Product product) {
+        for (Map.Entry<Product, Integer> entry : order.entrySet()) {
+            if (entry.getKey().getClass() == product.getClass()) {
+                return entry;
+            }
+        }
+        return null;
+    }
+
+    public void doTransaction() {
+        if (isEnoughBalanceToBuy()) {
+            balance -= total();
+            order.clear();
+        } else {
+            throw new IllegalStateException();
+        }
     }
 
     private boolean isCoinAllowed(int coin) {

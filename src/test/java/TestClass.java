@@ -4,6 +4,7 @@ import products.Coffee;
 import products.Tea;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TestClass {
     PosTerminal terminal;
@@ -34,7 +35,7 @@ public class TestClass {
     }
 
     @Test
-    public void testAddTwoSameOrders(){
+    public void testAddTwoSameOrders() {
         Tea tea1 = new Tea();
         Tea tea2 = new Tea();
         terminal.addOrder(tea1);
@@ -44,7 +45,7 @@ public class TestClass {
     }
 
     @Test
-    public void testAddTwoDifferentProducts(){
+    public void testAddTwoDifferentProducts() {
         Tea tea = new Tea();
         Coffee coffee = new Coffee();
         terminal.addOrder(tea);
@@ -56,7 +57,7 @@ public class TestClass {
     }
 
     @Test
-    public void testEnoughBalanceToBuy(){
+    public void testEnoughBalanceToBuy() {
         terminal.insertCoin(25);
         terminal.insertCoin(25);
         Tea tea1 = new Tea();
@@ -70,7 +71,7 @@ public class TestClass {
     }
 
     @Test
-    public void testNotEnoughBalanceToBuy(){
+    public void testNotEnoughBalanceToBuy() {
         terminal.insertCoin(25);
         Tea tea1 = new Tea();
         Tea tea2 = new Tea();
@@ -82,5 +83,52 @@ public class TestClass {
         assertEquals(false, isEnoughBalanceToBuy);
     }
 
+    @Test
+    public void testDoTransaction() {
+        terminal.insertCoin(25);
+        terminal.insertCoin(25);
+        Tea tea1 = new Tea();
+        Tea tea2 = new Tea();
+        Coffee coffee = new Coffee();
+        terminal.addOrder(tea1);
+        terminal.addOrder(tea2);
+        terminal.addOrder(coffee);
+        terminal.doTransaction();
+        assertEquals(10, terminal.getBalance());
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testDoImpossibleTransaction() {
+        terminal.insertCoin(25);
+        Tea tea1 = new Tea();
+        Tea tea2 = new Tea();
+        Coffee coffee = new Coffee();
+        terminal.addOrder(tea1);
+        terminal.addOrder(tea2);
+        terminal.addOrder(coffee);
+        terminal.doTransaction();
+    }
+
+    @Test
+    public void testCancelOrderFromSingle() {
+        Tea tea1 = new Tea();
+        Tea tea2 = new Tea();
+        terminal.addOrder(tea1);
+        terminal.cancelOrder(tea2);
+        assertTrue(terminal.getOrder().isEmpty());
+    }
+
+    @Test
+    public void testCancelOrderFromMultiple() {
+        Tea tea1 = new Tea();
+        Tea tea2 = new Tea();
+        Tea tea3 = new Tea();
+        terminal.addOrder(tea1);
+        terminal.addOrder(tea2);
+        terminal.cancelOrder(tea3);
+        assertTrue(!terminal.getOrder().isEmpty());
+        int amountOfProduct = terminal.getExistingProduct(tea1).getValue();
+        assertEquals(1, amountOfProduct);
+    }
 
 }
