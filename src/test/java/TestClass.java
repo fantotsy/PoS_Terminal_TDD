@@ -1,5 +1,6 @@
 import org.junit.Before;
 import org.junit.Test;
+import products.Coffee;
 import products.Tea;
 
 import static org.junit.Assert.assertEquals;
@@ -41,5 +42,45 @@ public class TestClass {
         int teaQuantity = terminal.getOrder().get(tea1);
         assertEquals(2, teaQuantity);
     }
+
+    @Test
+    public void testAddTwoDifferentProducts(){
+        Tea tea = new Tea();
+        Coffee coffee = new Coffee();
+        terminal.addOrder(tea);
+        terminal.addOrder(coffee);
+        int teaQuantity = terminal.getOrder().get(tea);
+        assertEquals(1, teaQuantity);
+        int coffeeQuantity = terminal.getOrder().get(coffee);
+        assertEquals(1, coffeeQuantity);
+    }
+
+    @Test
+    public void testEnoughBalanceToBuy(){
+        terminal.insertCoin(25);
+        terminal.insertCoin(25);
+        Tea tea1 = new Tea();
+        Tea tea2 = new Tea();
+        Coffee coffee = new Coffee();
+        terminal.addOrder(tea1);
+        terminal.addOrder(tea2);
+        terminal.addOrder(coffee);
+        boolean isEnoughBalanceToBuy = terminal.isEnoughBalanceToBuy();
+        assertEquals(true, isEnoughBalanceToBuy);
+    }
+
+    @Test
+    public void testNotEnoughBalanceToBuy(){
+        terminal.insertCoin(25);
+        Tea tea1 = new Tea();
+        Tea tea2 = new Tea();
+        Coffee coffee = new Coffee();
+        terminal.addOrder(tea1);
+        terminal.addOrder(tea2);
+        terminal.addOrder(coffee);
+        boolean isEnoughBalanceToBuy = terminal.isEnoughBalanceToBuy();
+        assertEquals(false, isEnoughBalanceToBuy);
+    }
+
 
 }

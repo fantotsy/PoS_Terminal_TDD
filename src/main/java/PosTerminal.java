@@ -39,16 +39,29 @@ public class PosTerminal {
     public void addOrder(Product product) {
         boolean found = false;
         for (Map.Entry<Product, Integer> entry : order.entrySet()) {
-            if (entry.getKey().getClass() == product.getClass()){
-                Product existingProduct = entry.getKey();
+            if (entry.getKey().getClass() == product.getClass()) {
                 int amountOfProduct = entry.getValue();
-                order.put(existingProduct, ++amountOfProduct);
+                entry.setValue(++amountOfProduct);
+                found = true;
                 break;
             }
         }
-        if(!found){
+        if (!found) {
             order.put(product, 1);
         }
+    }
+
+    public int total() {
+        int result = 0;
+        for (Map.Entry<Product, Integer> entry : order.entrySet()) {
+            result += entry.getKey().getPrice() * entry.getValue();
+        }
+        return result;
+    }
+
+    public boolean isEnoughBalanceToBuy() {
+        int total = total();
+        return (balance > total);
     }
 
     private boolean isCoinAllowed(int coin) {
