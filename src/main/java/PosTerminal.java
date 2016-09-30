@@ -1,4 +1,8 @@
+import products.Product;
+
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class PosTerminal {
@@ -9,6 +13,7 @@ public class PosTerminal {
         add(25);
         add(50);
     }};
+    private Map<Product, Integer> order;
     private int balance;
 
     public int getBalance() {
@@ -16,7 +21,11 @@ public class PosTerminal {
     }
 
     public PosTerminal() {
+        order = new HashMap<Product, Integer>();
+    }
 
+    public Map<Product, Integer> getOrder() {
+        return order;
     }
 
     public void insertCoin(int coin) {
@@ -28,7 +37,18 @@ public class PosTerminal {
     }
 
     public void addOrder(Product product) {
-
+        boolean found = false;
+        for (Map.Entry<Product, Integer> entry : order.entrySet()) {
+            if (entry.getKey().getClass() == product.getClass()){
+                Product existingProduct = entry.getKey();
+                int amountOfProduct = entry.getValue();
+                order.put(existingProduct, ++amountOfProduct);
+                break;
+            }
+        }
+        if(!found){
+            order.put(product, 1);
+        }
     }
 
     private boolean isCoinAllowed(int coin) {
