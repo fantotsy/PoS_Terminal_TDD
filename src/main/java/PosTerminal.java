@@ -1,5 +1,3 @@
-import javafx.beans.binding.IntegerBinding;
-import javafx.beans.binding.MapBinding;
 import products.Product;
 
 import java.util.HashMap;
